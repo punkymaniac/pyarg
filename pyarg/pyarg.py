@@ -33,6 +33,20 @@ __arguments = {}
 __set_arguments = []
 
 
+def __raise_error(message):
+  """
+  Raise a ArgError and put error value in __options and __arguments
+
+  :param: message: a message of error
+  """
+  global __options
+  global __arguments
+
+  __options = None
+  __arguments = None
+  raise ArgError(message)
+
+
 """
 
 Exported Constant, Class, Function
@@ -67,7 +81,7 @@ def parse():
     if useNext == True:
       if arg[0] == __CHAR_OPTION:
         if not arg in __set_options:
-          raise ArgError("option '" + arg + "' not reconized")
+          __raise_error("option '" + arg + "' not reconized")
         else:
           if __set_options[arg] == True:
             if nextArg < argc and argv[nextArg][0] != __CHAR_OPTION:
@@ -95,12 +109,12 @@ def parse():
   # end for
   for opt, arg in __options.items():
     if arg == None:
-      raise ArgError("missing require argument option: " + opt)
+      __raise_error("missing require argument option: " + opt)
     # end if
   # end for
   for argName in __set_arguments:
     if not argName in __arguments:
-      raise ArgError("missing require argument: " + argName)
+      __raise_error("missing require argument: " + argName)
     # end if
   # end for
 
