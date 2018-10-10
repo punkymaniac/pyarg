@@ -41,6 +41,17 @@ name = os.path.basename(sys.argv[0])
 argv = sys.argv[1:]
 argc = len(argv)
 
+class ArgError(Exception):
+
+  message = ''
+
+  def __init__(self, msg):
+
+    super(ArgError, self).__init__(msg)
+
+    self.message = msg
+
+
 def parse():
   """
   Parse the argument in argv
@@ -55,7 +66,7 @@ def parse():
     if useNext == True:
       if arg[0] == __CHAR_OPTION:
         if not arg in __options:
-          print(name + ": option '" + arg + "' not recognized")
+          raise ArgError("option '" + arg + "' not reconized")
         else:
           if nextArg < argc and argv[nextArg][0] != __CHAR_OPTION:
             __options[arg] = argv[nextArg]
@@ -79,12 +90,12 @@ def parse():
   # end for
   for opt, arg in __options.items():
     if arg == None:
-      print(name + ": error: missing require argument option: " + opt)
+      raise ArgError("missing require argument option: " + opt)
     # end if
   # end for
   for argName in __argumentsName:
     if not argName in __arguments:
-      print(name + ": error: missing require argument: " + argName)
+      raise ArgError("missing require argument: " + argName)
     # end if
   # end for
 
