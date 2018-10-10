@@ -28,8 +28,9 @@ Internal Constant, Class, Function
 __CHAR_OPTION = '-'
 
 __options = {}
+__set_options = {}
 __arguments = {}
-__argumentsName = []
+__set_arguments = []
 
 
 """
@@ -65,19 +66,23 @@ def parse():
   for arg in argv:
     if useNext == True:
       if arg[0] == __CHAR_OPTION:
-        if not arg in __options:
+        if not arg in __set_options:
           raise ArgError("option '" + arg + "' not reconized")
         else:
-          if nextArg < argc and argv[nextArg][0] != __CHAR_OPTION:
-            __options[arg] = argv[nextArg]
-            useNext = False
-          elif __options[arg] == True:
-            __options[arg] = None
+          if __set_options[arg] == True:
+            if nextArg < argc and argv[nextArg][0] != __CHAR_OPTION:
+              __options[arg] = argv[nextArg]
+              useNext = False
+            else:
+              __options[arg] = None
+            # end if
+          else:
+            __options[arg] = False
           # end if
         # end if
       else:
-        if len(__argumentsName) != 0:
-          __arguments[__argumentsName.pop()] = arg
+        if len(__set_arguments) != 0:
+          __arguments[__set_arguments.pop()] = arg
         else:
           __arguments[otherArg] = arg
           otherArg += 1
@@ -93,7 +98,7 @@ def parse():
       raise ArgError("missing require argument option: " + opt)
     # end if
   # end for
-  for argName in __argumentsName:
+  for argName in __set_arguments:
     if not argName in __arguments:
       raise ArgError("missing require argument: " + argName)
     # end if
@@ -116,9 +121,9 @@ def set_option(
   :param: option: option identifier
   :param: argument: (optional) if True, the option take one argument
   """
-  global __options
+  global __set_options
 
-  __options[option] = argument
+  __set_options[option] = argument
 
 def set_argument(
     argName
@@ -128,7 +133,7 @@ def set_argument(
 
   :param: argName: the name use to identify the parameter expected
   """
-  global __argumentsName
+  global __set_arguments
 
-  __argumentsName.append(argName)
+  __set_arguments.append(argName)
 
