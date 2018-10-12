@@ -74,6 +74,7 @@ def parse():
   global __options
   global __arguments
 
+  aloneOpt = {}
   useNext = True
   otherArg = 0;
   nextArg = 1
@@ -83,7 +84,9 @@ def parse():
         if not arg in __set_options:
           __raise_error("option '" + arg + "' not reconized")
         else:
-          if __set_options[arg] == True:
+          if __set_options[arg][1] == True:
+            aloneOpt[arg] = __set_options[arg]
+          elif __set_options[arg][0] == True:
             if nextArg < argc and argv[nextArg][0] != __CHAR_OPTION:
               __options[arg] = argv[nextArg]
               useNext = False
@@ -107,14 +110,19 @@ def parse():
     # end if
     nextArg += 1
   # end for
+  if not aloneOpt:
+    for argName in __set_arguments:
+      if not argName in __arguments:
+        __raise_error("missing require argument: " + argName)
+      # end if
+    # end for
+  else:
+    __arguments = {}
+    __options = aloneOpt
+  # end if
   for opt, arg in __options.items():
     if arg == None:
       __raise_error("missing require argument option: " + opt)
-    # end if
-  # end for
-  for argName in __set_arguments:
-    if not argName in __arguments:
-      __raise_error("missing require argument: " + argName)
     # end if
   # end for
 
@@ -127,7 +135,8 @@ def get_args():
 
 def set_option(
     option,
-    argument=False
+    argument=False,
+    alone=False
     ):
   """
   Set a new option
@@ -137,7 +146,7 @@ def set_option(
   """
   global __set_options
 
-  __set_options[option] = argument
+  __set_options[option] = (argument, alone)
 
 def set_argument(
     argName

@@ -3,7 +3,8 @@
 import pyarg
 
 pyarg.set_argument('path')
-pyarg.set_option('-v')
+pyarg.set_option('-v', alone=True)
+pyarg.set_option('-i')
 pyarg.set_option('-d', True)
 
 try:
@@ -14,7 +15,10 @@ else:
   args, option = pyarg.get_args()
   if '-v' in option:
     print("version: 0.0.1")
-  else:
+  if args:
     path = args['path']
-    print(path)
+    if '-i' in option:
+      print("My path: " + path)
+    else:
+      print(path)
 
